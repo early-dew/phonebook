@@ -1,0 +1,23 @@
+.successful {
+  color:rgb(2, 83, 2);
+  background-color: rgb(227, 255, 216);
+  font-size: 20px;
+  border-style: solid;
+  border-color: rgb(178, 228, 158);
+  border-radius: 8px;
+  padding: 8px;
+  margin-bottom: 24px;
+  max-width: 500px;
+}
+
+.failed {
+  color:rgb(94, 3, 41);
+  background-color: rgb(248, 209, 221);
+  font-size: 20px;
+  border-style: solid;
+  border-color: rgb(236, 144, 172);
+  border-radius: 8px;
+  padding: 8px;
+  margin-bottom: 24px;
+  max-width: 500px;
+}
