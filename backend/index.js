@@ -1,8 +1,10 @@
 const express = require('express')
 const app = express()
-const cors = require('cors')
 // const baseUrl = ''
-const baseUrl = 'http://localhost:3001/persons'
+const baseUrl = 'http://localhost:3001/api/persons'
+
+const cors = require('cors')
+
 
 app.use(cors())
 app.use(express.json())
