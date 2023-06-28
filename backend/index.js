@@ -1,7 +1,9 @@
+require('dotenv').config()
 const express = require('express')
 const app = express()
+const Person = require('./models/person')
 // const baseUrl = ''
-const baseUrl = 'http://localhost:3001/api/persons'
+// const baseUrl = 'http://localhost:3001/api/persons'
 
 const cors = require('cors')
 
@@ -9,32 +11,39 @@ const cors = require('cors')
 app.use(cors())
 app.use(express.json())
 
-let persons = [
-  {
-    "id": 1,
-    "name": "Arto Hellas",
-    "number": "040-123456"
-  },
-  {
-    "id": 2,
-    "name": "Ada Lovelace",
-    "number": "39-44-5323523"
-  },
-  {
-    "id": 3,
-    "name": "Dan Abramov",
-    "number": "12-43-234345"
-  },
-  {
-    "id": 4,
-    "name": "Mary Poppendieck",
-    "number": "39-23-6423122"
-  }
-]
+// let persons = [
+//   {
+//     "id": 1,
+//     "name": "Arto Hellas",
+//     "number": "040-123456"
+//   },
+//   {
+//     "id": 2,
+//     "name": "Ada Lovelace",
+//     "number": "39-44-5323523"
+//   },
+//   {
+//     "id": 3,
+//     "name": "Dan Abramov",
+//     "number": "12-43-234345"
+//   },
+//   {
+//     "id": 4,
+//     "name": "Mary Poppendieck",
+//     "number": "39-23-6423122"
+//   }
+// ]
 
 app.get('/api/persons', (request, response) => {
-  response.json(persons)
+  Person.find({}).then(persons => {
+    response.json(persons)
+  })
+
 })
+
+// app.get('/api/persons', (request, response) => {
+//   response.json(persons)
+// })
 
 app.get('/info', (request, response) => {
   response.send(`<p>Phonebook has info for ${persons.length} people</p> <p>${new Date()}<p>`)
@@ -87,7 +96,7 @@ app.post('/api/persons', (request, response) => {
 
 
 
-const PORT = process.env.PORT || 3001
+const PORT = process.env.PORT
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`)
 })

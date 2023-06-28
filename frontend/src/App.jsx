@@ -42,6 +42,10 @@ const App = () => {
       })
   }, [])
 
+  if (!persons) {
+    return null
+  }
+
   const handleNameChange = (event) => {
     setNewName(event.target.value)
   }
