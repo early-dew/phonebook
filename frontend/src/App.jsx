@@ -71,7 +71,10 @@ const App = () => {
           .update(sameName.id, updatedPerson)
           .then(returnedData => {
             setPersons(persons.map(person => person.id !== sameName.id ? person : returnedData))
+            setNewName('')
+            setNewNumber('')
           })
+
       }
     } else if (sameName) {
       alert(`${newName} is already added to phonebook`)
@@ -88,7 +91,11 @@ const App = () => {
           }, 2000)
         })
         .catch(error => {
-          console.log("failed to create a new contact")
+          console.log(error.response.data.error)
+          setErrorMessage(error.response.data.error)
+          setTimeout(() => {
+            setErrorMessage(null)
+          }, 6000)
         })
     }
 

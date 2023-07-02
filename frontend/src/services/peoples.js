@@ -1,6 +1,6 @@
 import axios from 'axios'
-// const baseUrl = 'http://localhost:3001/api/persons/'
-const baseUrl = 'https://phonebook-backend-zdpi.onrender.com/api/persons'
+const baseUrl = 'http://localhost:3001/api/persons/'
+// const baseUrl = 'https://phonebook-backend-zdpi.onrender.com/api/persons'
 const getAll = () => {
   const request = axios.get(baseUrl)
   return request.then(response => response.data)
@@ -13,7 +13,7 @@ const create = newObject => {
 
 const remove = (id) => {
   return axios
-    .delete(`${baseUrl}/${id}`)
+    .delete(`${baseUrl}${id}`)
     .then(response => {
       const returnedData = response.data
     })
@@ -21,7 +21,7 @@ const remove = (id) => {
 
 const update = (id, newObject) => {
   return axios
-    .put(`${baseUrl}/${id}`, newObject)
+    .put(`${baseUrl}${id}`, newObject)
     .then(response => response.data)
 }
 

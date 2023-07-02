@@ -1,12 +1,13 @@
+/* eslint-env node */
 require('dotenv').config()
 const express = require('express')
 const app = express()
 const Person = require('./models/person')
 // const baseUrl = ''
-// const baseUrl = 'http://localhost:3001/api/persons'
+// const baseUrl = 'http://localhost:3001/'
 
 const cors = require('cors')
-const person = require('./models/person')
+// const person = require('./models/person')
 
 
 app.use(cors())
@@ -46,10 +47,23 @@ app.get('/api/persons', (request, response) => {
 //   response.json(persons)
 // })
 
-app.get('/info', (request, response) => {
-  response.send(`<p>Phonebook has info for ${persons.length} people</p> <p>${new Date()}<p>`)
-  console.log(request.params)
+app.get('/api/persons/info', (request, response) => {
+  Person.countDocuments({})
+    .then(count => {
+      response.send(`<h3>Phonebook has info for ${count} people</h3>`)
+    })
+    .catch(error => {
+      console.log(error)
+      response.status(400).send({ error: 'Cannot fetch items count data' })
+    }
+    )
 })
+
+// response.send(`<p>Phonebook has info for ${Person.length} people</p> <p>${new Date()}<p>`)
+
+// app.get('/info', (request, response) => {
+//   response.send(`<p>Phonebook has info for ${persons.length} people</p> <p>${new Date()}<p>`)
+// })
 
 app.get('/api/persons/:id', (request, response) => {
   Person.findById(request.params.id)
@@ -62,7 +76,7 @@ app.get('/api/persons/:id', (request, response) => {
     })
     .catch(error => {
       console.log(error)
-      response.status(500).end()
+      response.status(400).send({ error: 'malformated id' })
     })
 })
 
@@ -77,22 +91,37 @@ app.get('/api/persons/:id', (request, response) => {
 //   }
 // })
 
-app.delete('/api/persons/:id', (request, response) => {
-  const id = Number(request.params.id)
-  persons = persons.filter(note => note.id !== id)
-  response.status(204).end()
+app.delete('/api/persons/:id', (request, response, next) => {
+
+  Person.findByIdAndRemove(request.params.id)
+    .then(result => {
+      console.log('Contact successfully deleted:', result)
+      response.status(204).end()
+    })
+    .catch(error => {
+      console.log('Error deleting contact:', error)
+      next(error)
+    })
+
 })
 
-const generatedId = () => {
-  return Math.floor(Math.random() * 1000000)
-}
+// app.delete('/api/persons/:id', (request, response) => {
+//   const id = Number(request.params.id)
+//   persons = persons.filter(note => note.id !== id)
+//   response.status(204).end()
+// })
 
-app.post('/api/persons', (request, response) => {
+// const generatedId = () => {
+//   return Math.floor(Math.random() * 1000000)
+// }
+
+app.post('/api/persons', (request, response, next) => {
   const body = request.body
 
-  if (body.name === undefined || body.number === undefined) {
-    return response.status(400).json({ error: 'name or number is missing' })
-  }
+
+  // if (body.name === undefined || body.number === undefined) {
+  //   return response.status(400).json({ error: 'name or number is missing' })
+  // }
 
   const person = new Person({
     name: body.name,
@@ -102,6 +131,22 @@ app.post('/api/persons', (request, response) => {
   person.save().then(savedPerson => {
     response.json(savedPerson)
   })
+    .catch(error => next(error))
+})
+
+app.put('/api/persons/:id', (request, response, next) => {
+  // const body = request.body
+  const { name, number } = request.body
+
+  // const person = {
+  //   name: body.name,
+  //   number: body.number,
+  // }
+  Person.findByIdAndUpdate(request.params.id, { name, number }, { new: true, runValidators: true, context: 'query' })
+    .then(updatedPerson => {
+      response.json(updatedPerson)
+    })
+    .catch(error => next(error))
 })
 
 // app.post('/api/persons', (request, response) => {
@@ -126,6 +171,21 @@ app.post('/api/persons', (request, response) => {
 //   persons = persons.concat(person)
 //   response.json(person)
 // })
+
+
+
+const errorHandler = (error, request, response, next) => {
+  console.log(error.message)
+
+  if (error.name === 'CastError') {
+    return response.status(400).send({ error: 'malformatted id' })
+  } else if (error.name === 'ValidationError') {
+    return response.status(400).json({ error: error.message })
+  }
+  next(error)
+}
+
+app.use(errorHandler)
 
 
 
