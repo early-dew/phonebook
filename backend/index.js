@@ -3,6 +3,9 @@ require('dotenv').config()
 const express = require('express')
 const app = express()
 const Person = require('./models/person')
+const config = require('./utils/config')
+const logger = require('./utils/logger')
+
 // const baseUrl = ''
 // const baseUrl = 'http://localhost:3001/'
 
@@ -187,9 +190,11 @@ const errorHandler = (error, request, response, next) => {
 
 app.use(errorHandler)
 
-
-
-const PORT = process.env.PORT
-app.listen(PORT, () => {
-  console.log(`Server listening on port ${PORT}`)
+app.listen(config.PORT, () => {
+  logger.info(`Server is running on port ${config.PORT}`)
 })
+
+// const PORT = process.env.PORT
+// app.listen(PORT, () => {
+//   console.log(`Server listening on port ${PORT}`)
+// })
